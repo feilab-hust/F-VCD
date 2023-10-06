@@ -54,7 +54,7 @@ config.img_setting.Nnum: the view number of input noisy LF
 
 config.channels_interp: filter number of F-VCD
 
-config.sub_pixel: upsamplin
+config.sub_pixel: upsampling factor
   ```
 Afer entering the baisc parameters, users can train the F-VCD model yourself, run:
   ```
