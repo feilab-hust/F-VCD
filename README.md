@@ -2,7 +2,7 @@
 
 ## F-VCD package for FLFM 3D reconstruction proposed in our paper:
 
-[Video-rate 3D imaging of living cells using Fourier view-channel-depth (F-VCD) light field microscopy](xxxxxx)  *(unpublished)*
+[Video-rate 3D imaging of living cells using Fourier view-channel-depth (F-VCD) light field microscopy](https://doi.org/10.1038/s42003-023-05636-x)
 
 
 ![Example](./example/example.png)
