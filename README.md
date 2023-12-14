@@ -73,10 +73,8 @@ and run [eval_test.py](./Code/DL_net/config.py):
 
 #### Note: More details about network traing and validation are refered to user's manual
 
-## Citation *(unpublished)*
+## Citation
 
-If you use this code and relevant data, please cite the corresponding paper where original methods appeared:
-Video-rate 3D imaging of living cells using Fourier view-channel-depth (F-VCD) light field microscopy
-
+If you use this code and relevant data, please cite the corresponding paper where original methods appeared: Yi, C., Zhu, L., Sun, J. et al. Video-rate 3D imaging of living cells using Fourier view-channel-depth light field microscopy. Commun Biol 6, 1259 (2023).DOI:https://doi.org/10.1038/s42003-023-05636-x
 Correspondence
 Should you have any questions regarding this code and the corresponding results, please contact Chengqiang Yi (cqyi@hust.edu.cn)
