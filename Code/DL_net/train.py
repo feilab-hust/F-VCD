@@ -92,20 +92,13 @@ class Trainer:
                                                 output_size=SR_size,
                                                 sr_factor=sr_factor,
                                                 angRes=n_num,reuse=False, name=SR_tag, channels_interp=64,normalize_mode=normalize_mode)
-            if config.net_setting.Recon_model=='MultiRes':
-                self.Recon_net = MultiRes_UNet(n_interp,sub_pixel,lf_extra=self.SR_net.outputs,
+
+            self.Recon_net = MultiRes_UNeT_test(lf_extra=self.SR_net.outputs,
                                            n_slices=n_slices,
                                            output_size=Recon_size,
                                            is_train=True, reuse=False, name=config.net_setting.Recon_model,
-                                           channels_interp=channels_interp, normalize_mode=normalize_mode,
+                                           channels_interp=channels_interp, normalize_mode=normalize_mode
                                            )
-            elif config.net_setting.Recon_model=='MultiRes_UNeT_test':
-                self.Recon_net = MultiRes_UNeT_test(lf_extra=self.SR_net.outputs,
-                                               n_slices=n_slices,
-                                               output_size=Recon_size,
-                                               is_train=True, reuse=False, name=config.net_setting.Recon_model,
-                                               channels_interp=channels_interp, normalize_mode=normalize_mode
-                                               )
 
         self.SR_net.print_params(False)
         self.Recon_net.print_params(False)
