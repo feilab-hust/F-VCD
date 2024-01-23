@@ -103,7 +103,7 @@ def infer(epoch, batch_size=1, use_cpu=False):
                                                 )
 
     SR_ckpt_file = [filename for filename in os.listdir(checkpoint_dir) if
-                    ('.npz' in filename and epoch in filename and 'denoise' in filename)]
+                    ('.npz' in filename and epoch in filename and 'SR' in filename)]
     Recon_ckpt_file = [filename for filename in os.listdir(checkpoint_dir) if
                        ('.npz' in filename and epoch in filename and 'recon' in filename)]
 
