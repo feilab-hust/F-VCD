@@ -25,8 +25,6 @@ __all__ = [
     'save_configs',
     'binary_normal',
     'spectrum2im',
-    # 'get_laplace_pyr'
-
 ]
 
 def save_configs(save_folder):

@@ -9,7 +9,7 @@ config.TRAIN = edict()
 config.Loss = edict()
 config.VALID = edict()
 
-label='[Mito_test]_view3_L5c126'
+label='[Mito]_view3_L5c126'
 #------------------------------image Setting----------------------------------
 config.img_setting.img_size     = 160
 config.img_setting.sr_factor=1
@@ -30,16 +30,16 @@ config.img_setting.LFP            = os.path.join(sourth_path,LFP)
 #------------------------------Preprocess Setting----------------------------------
 LFP_type='LFP'
 SynView_type='LFP'
-config.preprocess.normalize_mode = 'percentile'     #percentile; constant ; max
+config.preprocess.normalize_mode = 'percentile'
 config.preprocess.LFP_type='1_%s'%(LFP_type)
 config.preprocess.SynView_type='2_%s'%(SynView_type)
 config.preprocess.discard_view=[]
 #------------------------------net setting Setting----------------------------------
-config.net_setting.SR_model='LF_attention'  #RDN,RCAN,TransAttenRcan,SA
-config.net_setting.Recon_model='MultiRes_UNeT_test'  #Dynet,MultiRes
+config.net_setting.SR_model='F_Denoise'
+config.net_setting.Recon_model='F_Recon'
 config.net_setting.is_bias=False
 #------------------------------Label generate----------------------------------
-config.label=r'%s_x%d]_[%s_%s]_%s'%(label,config.img_setting.sr_factor,config.net_setting.SR_model,config.net_setting.Recon_model,config.preprocess.normalize_mode)
+config.label= label
 #------------------------------Pretrain Setting----------------------------------
 config.Pretrain.loading_pretrain_model=False
 config.Pretrain.ckpt_dir=r'/'

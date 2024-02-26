@@ -1,5 +1,4 @@
 import os
-# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 import time
@@ -23,7 +22,6 @@ n_interp = config.n_interp
 sub_pixel = config.sub_pixel
 
 sample_ratio= config.TRAIN.sample_ratio
-
 base_size = img_size // n_num  # lateral size of lf_extra
 normalize_mode = config.preprocess.normalize_mode
 test_num = 4
@@ -88,24 +86,16 @@ class Trainer:
 
 
         with tf.device('/gpu:{}'.format(config.TRAIN.device)):
-            self.SR_net =  LF_attention_denoise(LFP=self.plchdr_lf,
+            self.SR_net =  F_Denoise(LFP=self.plchdr_lf,
                                                 output_size=SR_size,
                                                 sr_factor=sr_factor,
                                                 angRes=n_num,reuse=False, name=SR_tag, channels_interp=64,normalize_mode=normalize_mode)
-            if config.net_setting.Recon_model=='MultiRes':
-                self.Recon_net = MultiRes_UNet(n_interp,sub_pixel,lf_extra=self.SR_net.outputs,
+            self.Recon_net = F_Recon(lf_extra=self.SR_net.outputs,
                                            n_slices=n_slices,
                                            output_size=Recon_size,
                                            is_train=True, reuse=False, name=config.net_setting.Recon_model,
-                                           channels_interp=channels_interp, normalize_mode=normalize_mode,
+                                           channels_interp=channels_interp, normalize_mode=normalize_mode
                                            )
-            elif config.net_setting.Recon_model=='MultiRes_UNeT_test':
-                self.Recon_net = MultiRes_UNeT_test(lf_extra=self.SR_net.outputs,
-                                               n_slices=n_slices,
-                                               output_size=Recon_size,
-                                               is_train=True, reuse=False, name=config.net_setting.Recon_model,
-                                               channels_interp=channels_interp, normalize_mode=normalize_mode
-                                               )
 
         self.SR_net.print_params(False)
         self.Recon_net.print_params(False)
@@ -116,7 +106,6 @@ class Trainer:
         # loss function
         # =====================
         self.loss = 0  # initial
-        # self._get_losses()    # get losses
         self.SR_loss=0
         self.Recon_loss=0
 
@@ -137,27 +126,16 @@ class Trainer:
 
         self.loss=loss_ratio[0]*self.SR_loss+loss_ratio[1]*self.Recon_loss
         tf.summary.scalar('learning_rate', self.learning_rate)
-        # define test_loss when test
         self.loss_test = self.loss
         # ----------------create sess-------------
         configProto = tf.ConfigProto(allow_soft_placement=False, log_device_placement=False)
         configProto.gpu_options.allow_growth = True
         self.sess = tf.Session(config=configProto)
-
-        # self.pre_train_opt =
-        self.SR_optim = tf.train.AdamOptimizer(self.learning_rate, beta1=beta1).minimize(self.SR_loss, var_list=SR_vars)
         self.Recon_optim = tf.train.AdamOptimizer(self.learning_rate, beta1=beta1).minimize(self.loss, var_list=SR_vars+Recon_vars)
         self.merge_op = tf.summary.merge_all()
         self.summary_writer = tf.summary.FileWriter(log_dir, self.sess.graph)
 
     def _train(self, begin_epoch):
-        """Train the VCD-Net
-        Params
-            -begin_epoch: int, if not 0, a checkpoint file will be loaded and the training will continue from there
-        """
-        ## create folders to save result images and trained model
-
-
         save_dir = test_saving_dir
         tl.files.exists_or_mkdir(save_dir)
         # save_configs(save_folder=os.path.join(os.getcwd(),save_dir))
@@ -193,22 +171,16 @@ class Trainer:
         self._get_test_data()
 
         fetches = self.losses
-        fetches['opti_sr'] = self.SR_optim
         fetches['opti_recon'] = self.Recon_optim
         fetches['batch_summary'] = self.merge_op
 
         while self.dataset.hasNext():
-
             Stack_batch,HR_batch, LF_batch, cursor, epoch = self.dataset.iter()  # get data
             feed_train = {
                           self.plchdr_target3d: Stack_batch,
                           self.plchdr_SynView:HR_batch,
                           self.plchdr_lf: LF_batch,
                           }
-
-            # if list(set(self.test_hr_list) & set(hr3d_list_batch)):
-            #     raise Exception('training data and validation data overlap')
-
             epoch += begin_epoch
             step_time = time.time()
 
@@ -292,16 +264,12 @@ class Trainer:
             self.min_test_loss = test_loss
             self.best_epoch = epoch
             self._save_intermediate_ckpt(tag='best', sess=sess)
-            # self._save_pb(sess)
-
     def _plot_test_loss(self):
         loss = np.asarray(self.test_loss_plt)
         plt.figure()
         plt.plot(loss[:, 0], loss[:, 1])
         plt.savefig(plot_test_loss_dir + '/test_loss.png', bbox_inches='tight')
         plt.show()
-
-
     def _traversal_through_ckpts(self, checkpoint_dir, epoch, label=None):
         ckpt_found = False
         filelist = os.listdir(checkpoint_dir)
@@ -313,7 +281,6 @@ class Trainer:
                 else:
                     return file
         return None
-
     def train(self, **kwargs):
         try:
             self._train(**kwargs)

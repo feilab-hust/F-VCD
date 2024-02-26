@@ -18,19 +18,8 @@ class Dataset:
         self.shuffle_all_data=False
         self.shuffle_for_epoch=shuffle_for_epoch
         self.sample_ratio    = 1.0
-        
-        if normalize_mode == 'normalize_percentile_z_score':
-            self.normalize_fn = normalize_percentile_z_score
-        elif normalize_mode == 'percentile':
-            self.normalize_fn = normalize_percentile
-        elif normalize_mode == 'constant':
-            self.normalize_fn =normalize_constant
-        else:
-            self.normalize_fn = normalize
-
+        self.normalize_fn = normalize_percentile
         self.update_parameters(allow_new=True, **kwargs)
-
-
     def update_parameters(self, allow_new=False, **kwargs):
         if not allow_new:
             attr_new = []
@@ -43,9 +32,6 @@ class Dataset:
                 raise AttributeError("Not allowed to add new parameters (%s)" % ', '.join(attr_new))
         for k in kwargs:
             setattr(self, k, kwargs[k])
-
-
-
     def _load_dataset(self, shuffle=True):
 
         def _load_imgs(path, fn, regx='.*.tif', printable=False, type_name=None,**kwargs,):
@@ -60,7 +46,6 @@ class Dataset:
                 print('\r%s training data loading: %s -- %s  ---min: %f max:%f' % (type_name,img_file, str(img.shape),np.min(img),np.max(img)), end='')
                 imgs.append(img)
             return imgs,img_list[0:list_len]
-
 
 
         ###loading
@@ -147,7 +132,5 @@ class Dataset:
                    np.asarray([self.training_lf2d[i] for i in shuffle_idx]), \
                    idx - nt, \
                    self.epoch,\
-                   # [self.training_Target3D[i] for i in shuffle_idx],\
-                   # [self.training_SynView_list[i] for i in shuffle_idx]
 
         raise Exception('epoch index out of bounds:%d/%d' %(self.epoch, self.n_epochs))
