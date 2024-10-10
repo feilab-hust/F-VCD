@@ -81,4 +81,4 @@ Correspondence
 Should you have any questions regarding this code and the corresponding results, please contact Chengqiang Yi (cqyi@hust.edu.cn)
 
 ## To Do
-Update the manual and reformat codes for readability
+Update the manual and format codes for readability
