@@ -131,6 +131,7 @@ class Trainer:
         configProto = tf.ConfigProto(allow_soft_placement=False, log_device_placement=False)
         configProto.gpu_options.allow_growth = True
         self.sess = tf.Session(config=configProto)
+        self.SR_optim = tf.train.AdamOptimizer(self.learning_rate, beta1=beta1).minimize(self.SR_loss, var_list=SR_vars)
         self.Recon_optim = tf.train.AdamOptimizer(self.learning_rate, beta1=beta1).minimize(self.loss, var_list=SR_vars+Recon_vars)
         self.merge_op = tf.summary.merge_all()
         self.summary_writer = tf.summary.FileWriter(log_dir, self.sess.graph)
@@ -171,6 +172,7 @@ class Trainer:
         self._get_test_data()
 
         fetches = self.losses
+        fetches['opti_sr'] = self.SR_optim
         fetches['opti_recon'] = self.Recon_optim
         fetches['batch_summary'] = self.merge_op
 
